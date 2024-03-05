@@ -1,0 +1,2 @@
+GET https://costumes-delhi-town-tim.trycloudflare.com/api/product?storeId=store1&productId=2
+

@@ -1,0 +1,26 @@
+<views-count-component data-storeid="{{ shop.permanent_domain }}" data-productid="{{ product.id }}">
+  <div class="views-count">
+    <span>Views:</span>
+    <span id="views-count"></span>
+  </div>
+</views-count-component>
+
+{% style %}
+  .views-count {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+{% endstyle %}
+
+<script src="{{ 'script.js' |  asset_url  }}" defer></script>
+{% schema %}
+{
+  "name": "Views Count",
+  "target": "section",
+  "settings": [
+    { "type": "product", "id": "product", "label": "product", "autofill": true },
+    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
+  ]
+}
+{% endschema %}
