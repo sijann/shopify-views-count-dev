@@ -28,7 +28,7 @@ export async function loader({ request }) {
       take: Number(pageSize),
     });
 
-    if (products.length === 0) return json({ success: true, products: null });
+    if (products.length === 0) return json({ success: true, shop: shop, products: null });
 
     const productsJSON = await Promise.all(products.map(async (productView) => {
       const product = await admin.rest.resources.Product.find({

@@ -8,7 +8,6 @@ import React, { useState } from 'react'
 const Settings = () => {
 
   const settings = useLoaderData()
-  const [formData, setFormData] = useState(settings)
   const { smUp } = useBreakpoints();
   return (
     <Page
