@@ -9,7 +9,7 @@ class CustomViewsCountComponent extends HTMLElement {
 
     async sendViewsCountRequest(storeId, productId) {
         try {
-            const response = await fetch('https://engineers-contributions-cumulative-entrepreneurs.trycloudflare.com/api/product', {
+            const response = await fetch('https://oral-documentation-settings-promoting.trycloudflare.com/api/product', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

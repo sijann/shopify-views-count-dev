@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import EmptyStateComponent from './EmptyState'
-import { DataTable, LegacyCard, Link, Page } from '@shopify/polaris'
+import { Avatar, BlockStack, Button, DataTable, Grid, InlineStack, LegacyCard, Link, Page, Pagination, Thumbnail } from '@shopify/polaris'
 import { authenticate } from '../shopify.server';
 import db from '../db.server'
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import SkeletonExample from '../components/SkeletonPage';
 
 export async function loader({ request }) {
   try {
@@ -35,10 +36,11 @@ export async function loader({ request }) {
         session: session,
         id: productView.productId,
       });
-      return { title: product.title, url: `https://${shop}/products/${product.handle}`, views: productView.count }
+
+      console.log(product.image.src);
+      return { title: product.title, image: product.image.src, url: `https://${shop}/products/${product.handle}`, views: productView.count }
     }));
 
-    console.log(productsJSON, '---->json');
 
     return { shop: shop, productsData: productsJSON };
   } catch (error) {
@@ -48,13 +50,19 @@ export async function loader({ request }) {
 }
 
 
+
+
+
 const Index = () => {
 
+
+
   const { productsData, shop } = useLoaderData()
+
   console.log(productsData)
 
   const productsArray = productsData?.map((product) => {
-    return [<Link target='_blank' removeUnderline url={product.url} > {product.title}</Link>, product.views]
+    return [<InlineStack blockAlign='center' gap={'100'}><Avatar source={product.image} size='xl' /> <Link target='_blank' removeUnderline url={product.url} > {product.title}</Link> </InlineStack>, product.views]
   })
 
   const url = `https://${shop}/admin/themes/current/editor?template=product&addAppBlockId=6b3abca8-2d33-43dd-a64e-90115c65c50d/views-count&target=newAppsSection`
@@ -62,28 +70,59 @@ const Index = () => {
 
 
   return (
-    <Page title='Most viewed products' primaryAction={{ url: url, content: 'Install', target: '_blank' }}>
+    <>
+      {shop ?
 
 
-      <LegacyCard>
-        {productsData ?
-          <DataTable
-            columnContentTypes={[
-              'text',
-              'numeric',
+        <Page >
+          <Grid >
+            <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 9, xl: 9 }} >
 
-            ]}
-            headings={[
-              'Product',
-              'Views',
+              <LegacyCard title='Most Viewed Products'>
+                {productsData ?
+                  <DataTable
+                    verticalAlign='middle'
+                    columnContentTypes={[
+                      'text',
+                      'numeric',
 
-            ]}
-            rows={productsArray}
-          />
-          : <EmptyStateComponent />
-        }
-      </LegacyCard>
-    </Page>
+                    ]}
+                    headings={[
+                      'Product',
+                      'Views',
+
+                    ]}
+                    rows={productsArray}
+                  />
+                  : <EmptyStateComponent />
+                }
+
+              </LegacyCard>
+
+            </Grid.Cell>
+
+            <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 3, xl: 3 }} >
+              <LegacyCard title="Quick Links" sectioned >
+                <BlockStack gap={200}>
+                  <Button url='/app/installation' > Installation</Button>
+                  <Button url='/app/settings'> Settings</Button>
+                  <Button url='/app/faq'> FAQ</Button>
+                  <Button url='/app/contact'> Contact</Button>
+                </BlockStack>
+
+              </LegacyCard>
+
+            </Grid.Cell>
+
+
+          </Grid>
+        </Page>
+
+        :
+
+        <SkeletonExample />
+      }
+    </>
   )
 }
 

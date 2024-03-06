@@ -2,7 +2,7 @@
 
 client_id = "9f0d71045fcac781223c2b9ebd1e8375"
 name = "custom-app"
-application_url = "https://nights-pos-fold-commentary.trycloudflare.com"
+application_url = "https://ceremony-hardware-sensitive-wifi.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_script_tags,read_themes,write_products,write_script_tags"
 
 [auth]
 redirect_urls = [
-  "https://nights-pos-fold-commentary.trycloudflare.com/auth/callback",
-  "https://nights-pos-fold-commentary.trycloudflare.com/auth/shopify/callback",
-  "https://nights-pos-fold-commentary.trycloudflare.com/api/auth/callback"
+  "https://ceremony-hardware-sensitive-wifi.trycloudflare.com/auth/callback",
+  "https://ceremony-hardware-sensitive-wifi.trycloudflare.com/auth/shopify/callback",
+  "https://ceremony-hardware-sensitive-wifi.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
