@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import EmptyStateComponent from './EmptyState'
-import { Avatar, BlockStack, Button, DataTable, Grid, InlineStack, LegacyCard, Link, Page, Pagination, Thumbnail } from '@shopify/polaris'
+import { Avatar, Banner, BlockStack, Button, DataTable, EmptyState, Grid, InlineStack, LegacyCard, Link, Page, Pagination, Thumbnail } from '@shopify/polaris'
 import { authenticate } from '../shopify.server';
 import db from '../db.server'
 import { json } from '@remix-run/node';
@@ -9,43 +9,64 @@ import SkeletonExample from '../components/SkeletonPage';
 
 export async function loader({ request }) {
   try {
-    const { topic, session, admin } = await authenticate.admin(request);
+    const { session, admin } = await authenticate.admin(request);
     const { shop } = session;
+
+    if (!shop) {
+      return json({ success: false, shop: null, message: 'shop is required.' });
+    }
 
     const storeId = shop;
     const page = 1;
     const pageSize = 20;
 
-    if (!storeId) return json({ success: false, message: 'storeId is required.' })
-
-    const products = await db.productView.findMany({
-      where: {
-        storeId,
-      },
-      orderBy: {
-        count: 'desc',
-      },
-      skip: (Number(page) - 1) * Number(pageSize),
-      take: Number(pageSize),
-    });
-
-    if (products.length === 0) return json({ success: true, shop: shop, products: null });
-
-    const productsJSON = await Promise.all(products.map(async (productView) => {
-      const product = await admin.rest.resources.Product.find({
-        session: session,
-        id: productView.productId,
+    try {
+      const products = await db.productView.findMany({
+        where: {
+          storeId,
+        },
+        orderBy: {
+          count: 'desc',
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
 
-      console.log(product.image.src);
-      return { title: product.title, image: product.image.src, url: `https://${shop}/products/${product.handle}`, views: productView.count }
-    }));
+      if (products.length === 0) {
+        return json({ success: true, shop, products: null });
+      }
+      const productsJSON = [];
+
+      for (const productView of products) {
+        try {
+          const product = await admin.rest.resources.Product.find({
+            session,
+            id: productView.productId,
+          });
+          productsJSON.push({
+            success: true,
+            title: product.title,
+            image: product.image.src,
+            url: `https://${shop}/products/${product.handle}`,
+            views: productView.count
+          });
+        } catch (e) {
+          console.error(`Error fetching product: ${e}`);
+        }
+      }
 
 
-    return { shop: shop, productsData: productsJSON };
+
+
+      return { success: true, shop, productsData: productsJSON };
+    } catch (e) {
+      console.error(e);
+      return json({ success: false, shop, message: 'Error while fetching products data.' });
+    }
+
   } catch (error) {
-    console.error('Error:', error);
-    return json({ success: false, message: 'An error occurred.' });
+    console.error(error);
+    return json({ success: false, message: 'Something went wrong.', error });
   }
 }
 
@@ -53,13 +74,9 @@ export async function loader({ request }) {
 
 
 
+
 const Index = () => {
-
-
-
-  const { productsData, shop } = useLoaderData()
-
-  console.log(productsData)
+  const { success, message = '', productsData, shop } = useLoaderData()
 
   const productsArray = productsData?.map((product) => {
     return [<InlineStack blockAlign='center' gap={'100'}><Avatar source={product.image} size='xl' /> <Link target='_blank' removeUnderline url={product.url} > {product.title}</Link> </InlineStack>, product.views]
@@ -71,13 +88,23 @@ const Index = () => {
 
   return (
     <>
+      {!success &&
+        <Page><Banner
+          title="Oh, no."
+          action={{ content: 'Refresh Page', url: '/app/' }}
+          tone="critical"
+
+        >
+          <p>
+            {message}
+          </p>
+        </Banner>
+        </Page>}
+
       {shop ?
-
-
         <Page >
           <Grid >
             <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 9, xl: 9 }} >
-
               <LegacyCard title='Most Viewed Products'>
                 {productsData ?
                   <DataTable

@@ -1,16 +1,41 @@
-<views-count-component data-storeid="{{ shop.permanent_domain }}" data-productid="{{ product.id }}">
+<views-count-component
+  {{ block.shopify_attributes }}
+  data-storeid="{{ shop.permanent_domain }}"
+  data-productid="{{ product.id }}"
+>
   <div class="views-count">
-    <span>Views:</span>
-    <span id="views-count"></span>
+    {% render 'icon', icon: block.settings.icon %}
+    {% if block.settings.text_position == 'before' %}
+      <span>{{ block.settings.views }}</span>
+    {% endif %}
+    <span id="views-count"> __ </span>
+    {% if block.settings.text_position != 'before' %}
+      <span>{{ block.settings.text }}</span>
+    {% endif %}
   </div>
 </views-count-component>
 
 {% style %}
-  .views-count {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+  {% if block.settings.use_custom_color %}
+      .views-count{
+        color: {{ block.settings.color }};
+      }
+
+      .views-count svg{
+        color: {{ block.settings.icon_color }}
+      }
+    {% endif %}
+
+    .views-count {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .views-count svg {
+      width: 2rem;
+      height: 2rem;
+    }
 {% endstyle %}
 
 <script src="{{ 'script.js' |  asset_url  }}" defer></script>
@@ -19,8 +44,80 @@
   "name": "Views Count",
   "target": "section",
   "settings": [
-    { "type": "product", "id": "product", "label": "product", "autofill": true },
-    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "default": "eye",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Eye",
+          "value": "eye"
+        },
+        {
+          "label": "Fire",
+          "value": "fire"
+        },
+        {
+          "label": "Bolt",
+          "value": "bolt"
+        }
+      ]
+    },
+    {
+      "type": "inline_richtext",
+      "label": "Text",
+      "default": "views",
+      "id": "text"
+    },
+    {
+      "type": "select",
+      "label": "Text position",
+      "default": "after",
+      "id": "text_position",
+      "options": [
+        {
+          "label": "Before views count",
+          "value": "before"
+        },
+        {
+          "label": "After views count",
+          "value": "after"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "label": "Use custom Color",
+      "id": "use_custom_color",
+      "default": false
+    },
+    {
+      "type": "color",
+      "default": "#000000",
+      "id": "color",
+      "label": "Text color",
+      "info": "Only works if 'Use theme color' option is disabled."
+    },
+    {
+      "type": "color",
+      "default": "#000000",
+      "id": "icon_color",
+      "label": "Icon color",
+      "info": "Only works if 'Use theme color' option is disabled."
+    }
   ]
 }
 {% endschema %}
