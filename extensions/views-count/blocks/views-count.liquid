@@ -2,13 +2,14 @@
   {{ block.shopify_attributes }}
   data-storeid="{{ shop.permanent_domain }}"
   data-productid="{{ product.id }}"
+  data-id="{{ block.id }}"
 >
   <div class="views-count">
     {% render 'icon', icon: block.settings.icon %}
     {% if block.settings.text_position == 'before' %}
       <span>{{ block.settings.views }}</span>
     {% endif %}
-    <span id="views-count"> __ </span>
+    <span id="views-count-{{ block.id }}"> <views-count>__</views-count> </span>
     {% if block.settings.text_position != 'before' %}
       <span>{{ block.settings.text }}</span>
     {% endif %}

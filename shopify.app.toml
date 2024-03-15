@@ -2,7 +2,7 @@
 
 client_id = "9f0d71045fcac781223c2b9ebd1e8375"
 name = "custom-app"
-application_url = "https://broader-higher-or-linda.trycloudflare.com"
+application_url = "https://earl-motorcycles-canvas-mount.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,13 +16,18 @@ scopes = "read_script_tags,read_themes,write_products,write_script_tags"
 
 [auth]
 redirect_urls = [
-  "https://broader-higher-or-linda.trycloudflare.com/auth/callback",
-  "https://broader-higher-or-linda.trycloudflare.com/auth/shopify/callback",
-  "https://broader-higher-or-linda.trycloudflare.com/api/auth/callback"
+  "https://earl-motorcycles-canvas-mount.trycloudflare.com/auth/callback",
+  "https://earl-motorcycles-canvas-mount.trycloudflare.com/auth/shopify/callback",
+  "https://earl-motorcycles-canvas-mount.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
+
+[app_proxy]
+url = "https://earl-motorcycles-canvas-mount.trycloudflare.com/api"
+subpath = "custom-app"
+prefix = "apps"
 
 [pos]
 embedded = false

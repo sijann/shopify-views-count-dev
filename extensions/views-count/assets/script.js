@@ -1,48 +1,78 @@
-class CustomViewsCountComponent extends HTMLElement {
-    constructor() {
-        super();
-        this.storeId = this.dataset.storeid;
-        this.productId = this.dataset.productid;
-        this.requestDebounce = debounce(this.sendViewsCountRequest.bind(this), 100);
-        this.requestDebounce(this.storeId, this.productId);
-    }
+if (!customElements.get('views-count-component')) {
 
-    async sendViewsCountRequest(storeId, productId) {
-        try {
-            const response = await fetch('https://broader-higher-or-linda.trycloudflare.com/api/product', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
 
-                },
-                body: JSON.stringify({ storeId, productId }),
-            });
+    customElements.define('views-count-component', class CustomViewsCountComponent extends HTMLElement {
+        constructor() {
+            super();
+            this.storeId = this.dataset.storeid;
+            this.productId = this.dataset.productid;
+            this.id = this.dataset.id;
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch views count');
+            // Create a shared variable to track request status and count
+            if (!CustomViewsCountComponent.requestSent) {
+                CustomViewsCountComponent.requestSent = false;
+                CustomViewsCountComponent.viewsCount = null;
             }
 
-            const data = await response.json();
-
-            const viewsCountElement = this.shadowRoot?.querySelector('#views-count') || this.querySelector('#views-count');
-            viewsCountElement.textContent = data.count;
-        } catch (error) {
-            console.error('Error fetching views count:', error);
+            this.requestDebounce = this.debounce(this.sendViewsCountRequest.bind(this), 100);
         }
-    }
 
-    connectedCallback() {
-        this.requestDebounce(this.storeId, this.productId);
-    }
+        debounce(func, wait) {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        async sendViewsCountRequest() {
+            if (!CustomViewsCountComponent.requestSent) {
+                CustomViewsCountComponent.requestSent = true;
+
+                try {
+                    const response = await fetch(`/apps/custom-app/product`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                        },
+                        body: JSON.stringify({ storeId: this.storeId, productId: this.productId }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch views count');
+                    }
+
+                    const data = await response.json();
+                    CustomViewsCountComponent.viewsCount = data.count; // Update shared count
+                    this.updateViewsCount(); // Update for this component
+                } catch (error) {
+                    console.error('Error fetching views count:', error);
+                } finally {
+                    CustomViewsCountComponent.requestSent = false; // Allow future requests
+                }
+            }
+        }
+
+        connectedCallback() {
+            this.requestDebounce(); // Initiate the request
+        }
+
+        updateViewsCount() {
+            // Check if count is available (fetched or null)
+            if (CustomViewsCountComponent.viewsCount !== null) {
+                const viewsCountElements = document.querySelectorAll('views-count') || this.querySelector('views-count');
+                if (viewsCountElements && viewsCountElements[0]) {
+                    viewsCountElements.forEach((element) => {
+                        element.textContent = CustomViewsCountComponent.viewsCount;
+
+                    })
+                }
+
+            } else {
+                // Display loading indicator or placeholder (optional)
+                console.log('Views count not yet available'); // Or display a message
+            }
+        }
+    });
 }
-
-function debounce(func, wait) {
-    let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func(...args), wait);
-    };
-}
-
-customElements.define('views-count-component', CustomViewsCountComponent);

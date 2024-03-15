@@ -6,5 +6,8 @@
     "home": {
       "recommendationText": "Recommended Product!"
     }
+  },
+  "months": {
+    "january": "January"
   }
 }

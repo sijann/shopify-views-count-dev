@@ -1,0 +1,13 @@
+{
+    "ratings": {
+        "stars": {
+            "label": "Ratings"
+        },
+        "home": {
+            "recommendationText": "Recommended Product!"
+        }
+    },
+    "months": {
+        "january": "France January"
+    }
+}
