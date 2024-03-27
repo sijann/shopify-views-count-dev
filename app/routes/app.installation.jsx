@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { Form, useActionData, useLoaderData, useNavigation } from "@remix-run/react";
-import { Banner, BlockStack, Button, InlineGrid, Page, Text } from "@shopify/polaris";
-import { PlusIcon, MinusIcon, CheckIcon } from '@shopify/polaris-icons';
+import { Avatar, Banner, BlockStack, Button, Card, Icon, InlineGrid, InlineStack, Page, Text, Tooltip } from "@shopify/polaris";
+import { PlusIcon, MinusIcon, CheckIcon, QuestionCircleIcon } from '@shopify/polaris-icons';
 import { authenticate } from "../shopify.server";
+import ViewsCountInstall from "../components/ViewsCountInstall";
+import MostViewedSection from "../components/MostViewedSection";
 
 export async function loader({ request }) {
     try {
@@ -95,6 +97,9 @@ export default function Installation() {
 
     }, [])
 
+    const storeData = { domain: shop }
+    const mostViewedBlockData = { isInstalled: false }
+
     return (
         <Page>
             {!shop && <Banner
@@ -104,26 +109,13 @@ export default function Installation() {
             >
                 <p>Something went wrong.</p>
             </Banner>}
-            <InlineGrid columns={2} gap={200}>
-                <Form method={hasScript ? 'DELETE' : 'POST'}>
-                    <Banner ref={liquidbanner} title="For themes that don't support app blocks" tone="warning" >
-                        <BlockStack align="start" inlineAlign="start" gap={"200"}>
-                            <Text as="p">If you see 'app block not added' message, you can add a script tag to display the views count.</Text>
-                            <Button loading={pending} tone={hasScript ? 'critical' : 'success'} icon={hasScript ? MinusIcon : PlusIcon} variant="primary" submit={true}>
-                                {hasScript ? 'Remove Script' : 'Add Script'}
-                            </Button>
-                        </BlockStack>
-                    </Banner>
-                </Form>
-                <Banner ref={jsonbanner} title="For themes that support app blocks" tone="success">
-                    <BlockStack align="start" inlineAlign="start" gap={"200"}>
-                        <Text as="p">If you are using JSON templates, you can simply install the widget from here.</Text>
-                        <Button tone="success" icon={blockInstalled ? CheckIcon : PlusIcon} variant="primary" url={installURL} target="_blank">
-                            {blockInstalled ? 'Installed' : 'Install'}
-                        </Button>
-                    </BlockStack>
-                </Banner>
-            </InlineGrid>
+
+            <BlockStack gap={"600"}>
+                <ViewsCountInstall hasScript={hasScript} liquidbanner={liquidbanner} pending={pending} jsonbanner={jsonbanner} blockInstalled={blockInstalled} installURL={installURL} />
+
+
+                <MostViewedSection storeData={storeData} blockData={mostViewedBlockData} />
+            </BlockStack>
         </Page>
     );
 }

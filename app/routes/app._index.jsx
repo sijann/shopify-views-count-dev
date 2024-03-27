@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import EmptyStateComponent from './EmptyState'
-import { Avatar, Banner, BlockStack, Button, DataTable, EmptyState, Grid, InlineStack, LegacyCard, Link, Page, Pagination, Thumbnail } from '@shopify/polaris'
+import { Avatar, Banner, BlockStack, Button, Card, DataTable, EmptyState, Grid, InlineStack, LegacyCard, Link, Page, Pagination, Text, Thumbnail } from '@shopify/polaris'
 import { authenticate } from '../shopify.server';
 import db from '../db.server'
 import { json } from '@remix-run/node';
@@ -79,7 +79,7 @@ const Index = () => {
   const { success, message = '', productsData, shop } = useLoaderData()
 
   const productsArray = productsData?.map((product) => {
-    return [<InlineStack blockAlign='center' gap={'100'}><Avatar source={product.image} size='xl' /> <Link target='_blank' removeUnderline url={product.url} > {product.title}</Link> </InlineStack>, product.views]
+    return [<InlineStack blockAlign='center' gap={'100'}><Thumbnail source={product.image} size='small' /> <Link target='_blank' removeUnderline url={product.url} > {product.title}</Link> </InlineStack>, product.views]
   })
 
   const url = `https://${shop}/admin/themes/current/editor?template=product&addAppBlockId=6b3abca8-2d33-43dd-a64e-90115c65c50d/views-count&target=newAppsSection`
@@ -104,40 +104,48 @@ const Index = () => {
       {shop ?
         <Page >
           <Grid >
+
             <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 9, xl: 9 }} >
-              <LegacyCard title='Most Viewed Products'>
-                {productsData ?
-                  <DataTable
-                    verticalAlign='middle'
-                    columnContentTypes={[
-                      'text',
-                      'numeric',
+              <BlockStack gap={200}>
+                <Text as='h3' variant='headingMd' > Products Data </Text>
 
-                    ]}
-                    headings={[
-                      'Product',
-                      'Views',
+                <Card sectioned>
+                  {productsData ?
+                    <DataTable
+                      verticalAlign='middle'
+                      columnContentTypes={[
+                        'text',
+                        'numeric',
 
-                    ]}
-                    rows={productsArray}
-                  />
-                  : <EmptyStateComponent />
-                }
+                      ]}
+                      headings={[
+                        'Product',
+                        'Views',
 
-              </LegacyCard>
+                      ]}
+                      rows={productsArray}
+                    />
+                    : <EmptyStateComponent />
+                  }
 
+                </Card>
+
+              </BlockStack>
             </Grid.Cell>
 
             <Grid.Cell columnSpan={{ xs: 6, sm: 2, md: 2, lg: 3, xl: 3 }} >
-              <LegacyCard title="Quick Links" sectioned >
-                <BlockStack gap={200}>
-                  <Button url='/app/installation' > Installation</Button>
-                  <Button url='/app/settings'> Settings</Button>
-                  <Button url='/app/faq'> FAQ</Button>
-                  <Button url='/app/contact'> Contact</Button>
-                </BlockStack>
+              <BlockStack gap={200}>
+                <Text as='h3' variant='headingMd' > Quick Links </Text>
+                <Card sectioned>
+                  <BlockStack gap={200}>
+                    <Button tone='success' variant='primary' url='/app/installation' > Installation</Button>
+                    <Button tone='success' variant='primary' url='/app/settings'> Settings</Button>
+                    <Button tone='success' variant='primary' url='/app/faq'> FAQ</Button>
+                    <Button tone='success' variant='primary' url='/app/contact'> Contact</Button>
+                  </BlockStack>
 
-              </LegacyCard>
+                </Card>
+              </BlockStack>
 
             </Grid.Cell>
 

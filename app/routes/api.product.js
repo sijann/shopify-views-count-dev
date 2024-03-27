@@ -18,7 +18,11 @@ export const action = async ({ request }) => {
 async function handlePost(request) {
     const data = await request.json();
 
-    const { storeId, productId } = data;
+    const { storeId, productId, productHandle } = data;
+
+    if (!storeId || !productId || !productHandle) {
+        return json({ success: false })
+    }
 
     let productView = await db.productView.findFirst({
         where: {
@@ -36,6 +40,7 @@ async function handlePost(request) {
             data: {
                 storeId,
                 productId,
+                productHandle,
                 count: 1,
             },
         });

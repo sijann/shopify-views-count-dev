@@ -7,6 +7,7 @@ if (!customElements.get('views-count-component')) {
             this.storeId = this.dataset.storeid;
             this.productId = this.dataset.productid;
             this.id = this.dataset.id;
+            this.handle = this.dataset.producthandle;
 
             // Create a shared variable to track request status and count
             if (!CustomViewsCountComponent.requestSent) {
@@ -36,7 +37,7 @@ if (!customElements.get('views-count-component')) {
                             'Content-Type': 'application/json',
                             'Access-Control-Allow-Origin': '*',
                         },
-                        body: JSON.stringify({ storeId: this.storeId, productId: this.productId }),
+                        body: JSON.stringify({ storeId: this.storeId, productId: this.productId, productHandle: this.handle }),
                     });
 
                     if (!response.ok) {

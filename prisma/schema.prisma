@@ -25,6 +25,7 @@ model ProductView {
   id        Int      @id @default(autoincrement())
   storeId   String
   productId String
+  productHandle String
   count     Int      @default(0)
   createdAt DateTime @default(now())
 }

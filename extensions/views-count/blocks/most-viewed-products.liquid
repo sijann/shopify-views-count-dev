@@ -1,0 +1,111 @@
+<most-viewed-products
+  {{ block.shopify_attributes }}
+  data-storeid="{{ shop.permanent_domain }}"
+  data-productid="{{ product.id }}"
+  data-id="{{ block.id }}"
+>
+  <h2>Most Viewed Products</h2>
+  <div class="test" id="product-grid"></div>
+</most-viewed-products>
+{% style %}
+  most-viewed-products #product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  most-viewed-products #product-grid img {
+    max-width: 100%;
+    height: auto;
+  }
+{% endstyle %}
+
+<script>
+  class MostViewedProducts extends HTMLElement {
+    constructor() {
+      super();
+      this.storeId = this.dataset.storeid;
+      this.productId = this.dataset.productid;
+      this.id = this.dataset.id;
+      this.getProductsData();
+    }
+
+    async getProductsData() {
+      try {
+        const response = await fetch(`/apps/custom-app/mostviewed?store=${this.storeId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch views count');
+        }
+
+        const data = await response.json();
+
+        console.log(data.products, '---------productsdata');
+        if (data.products) {
+          this.displayProducts(data.products);
+        }
+      } catch (error) {
+        console.error('Error fetching views count:', error);
+      }
+    }
+
+    displayProducts(products) {
+      const productGrid = this.querySelector('#product-grid');
+
+      (async () => {
+        for (const product of products) {
+          if (product.count && product.productHandle) {
+            const handle = product.productHandle;
+            const views = product.count;
+
+            const productUrl = `${window.Shopify.routes.root}products/${handle}.json`;
+
+            try {
+              const response = await fetch(productUrl);
+              if (!response.ok) {
+                throw new Error(`Failed to fetch product with handle: ${handle}`);
+              }
+
+              const productData = await response.json();
+              if (productData.product) {
+                const product = productData.product;
+                const { title, image, vendor, url } = product;
+
+                // Create the product grid element
+                const productElement = document.createElement('div');
+                productElement.classList.add('product-item'); // Add a CSS class for styling
+
+                // Build the product content
+                productElement.innerHTML = `
+              <img src="${image.src}" alt="${title}">
+              <h3>${title}</h3>
+              <p>Brand: ${vendor}</p>
+              <a href="${url}" class="view-product-btn">View Product</a>
+              <p>Views: ${views} </p>
+            `;
+
+                // Append the product element to the grid
+                productGrid.appendChild(productElement);
+              } else {
+                console.error(`Error fetching product with handle: ${handle}`);
+              }
+            } catch (error) {
+              console.error('Error:', error);
+            }
+          }
+        }
+      })();
+    }
+  }
+
+  customElements.define('most-viewed-products', MostViewedProducts);
+</script>
+
+{% schema %}
+{ "name": "Most Viewed Products", "target": "section", "settings": [] }
+{% endschema %}

@@ -2,7 +2,7 @@
 
 client_id = "9f0d71045fcac781223c2b9ebd1e8375"
 name = "custom-app"
-application_url = "https://earl-motorcycles-canvas-mount.trycloudflare.com"
+application_url = "https://www-pink-pike-musical.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,16 +16,16 @@ scopes = "read_script_tags,read_themes,write_products,write_script_tags"
 
 [auth]
 redirect_urls = [
-  "https://earl-motorcycles-canvas-mount.trycloudflare.com/auth/callback",
-  "https://earl-motorcycles-canvas-mount.trycloudflare.com/auth/shopify/callback",
-  "https://earl-motorcycles-canvas-mount.trycloudflare.com/api/auth/callback"
+  "https://www-pink-pike-musical.trycloudflare.com/auth/callback",
+  "https://www-pink-pike-musical.trycloudflare.com/auth/shopify/callback",
+  "https://www-pink-pike-musical.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
 api_version = "2024-01"
 
 [app_proxy]
-url = "https://earl-motorcycles-canvas-mount.trycloudflare.com/api"
+url = "https://www-pink-pike-musical.trycloudflare.com/api"
 subpath = "custom-app"
 prefix = "apps"
 
