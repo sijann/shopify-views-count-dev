@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b4fe11181866202110f81c1e0fabc0df"
+name = "views-count"
+application_url = "https://dream-continuous-arrived-ld.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "quickstart-3024ec9a.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://dream-continuous-arrived-ld.trycloudflare.com/auth/callback",
+  "https://dream-continuous-arrived-ld.trycloudflare.com/auth/shopify/callback",
+  "https://dream-continuous-arrived-ld.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false

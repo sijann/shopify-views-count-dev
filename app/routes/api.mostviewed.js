@@ -11,7 +11,7 @@ export async function loader({ request }) {
         }
 
         const page = 1;
-        const pageSize = 20;
+        const pageSize = 10;
 
         try {
             const products = await db.productView.findMany({

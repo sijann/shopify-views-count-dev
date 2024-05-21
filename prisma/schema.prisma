@@ -22,10 +22,24 @@ model Session {
 }
 
 model ProductView {
-  id        Int      @id @default(autoincrement())
-  storeId   String
-  productId String
+  id            Int      @id @default(autoincrement())
+  storeId       String
+  productId     String
   productHandle String
-  count     Int      @default(0)
+  timeframe     String
+  count         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@index([storeId, productId])
+  @@index([timeframe])
+}
+
+model AllViews {
+  id        Int      @id @default(autoincrement())
+  productId String
+  storeId   String
   createdAt DateTime @default(now())
+
+  @@index([storeId, productId])
+  @@index([createdAt])
 }

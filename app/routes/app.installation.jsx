@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { Form, useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import { Avatar, Banner, BlockStack, Button, Card, Icon, InlineGrid, InlineStack, Page, Text, Tooltip } from "@shopify/polaris";
-import { PlusIcon, MinusIcon, CheckIcon, QuestionCircleIcon } from '@shopify/polaris-icons';
+import { PlusIcon, MinusIcon, CheckIcon, QuestionCircleIcon, ArrowLeftIcon } from '@shopify/polaris-icons';
 import { authenticate } from "../shopify.server";
 import ViewsCountInstall from "../components/ViewsCountInstall";
 import MostViewedSection from "../components/MostViewedSection";
+import PageTitle from "../components/PageTitle";
 
 export async function loader({ request }) {
     try {
@@ -102,19 +103,22 @@ export default function Installation() {
 
     return (
         <Page>
-            {!shop && <Banner
-                title="Oh, no."
-                action={{ content: 'Refresh Page', url: '/app/' }}
-                tone="critical"
-            >
-                <p>Something went wrong.</p>
-            </Banner>}
+            <BlockStack gap={400}>
+                <PageTitle title='Installation' />
+                {!shop && <Banner
+                    title="Oh, no."
+                    action={{ content: 'Refresh Page', url: '/app/' }}
+                    tone="critical"
+                >
+                    <p>Something went wrong.</p>
+                </Banner>}
 
-            <BlockStack gap={"600"}>
-                <ViewsCountInstall hasScript={hasScript} liquidbanner={liquidbanner} pending={pending} jsonbanner={jsonbanner} blockInstalled={blockInstalled} installURL={installURL} />
+                <BlockStack gap={"600"}>
+                    <ViewsCountInstall hasScript={hasScript} liquidbanner={liquidbanner} pending={pending} jsonbanner={jsonbanner} blockInstalled={blockInstalled} installURL={installURL} />
 
 
-                <MostViewedSection storeData={storeData} blockData={mostViewedBlockData} />
+                    <MostViewedSection storeData={storeData} blockData={mostViewedBlockData} />
+                </BlockStack>
             </BlockStack>
         </Page>
     );

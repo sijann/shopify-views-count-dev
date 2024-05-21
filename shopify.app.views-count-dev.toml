@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "7d9394067b5e91703541d3567441137f"
+name = "Views Count Dev"
+application_url = "https://go-southern-bags-microphone.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "appli-testing.myshopify.com"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://go-southern-bags-microphone.trycloudflare.com/auth/callback",
+  "https://go-southern-bags-microphone.trycloudflare.com/auth/shopify/callback",
+  "https://go-southern-bags-microphone.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false

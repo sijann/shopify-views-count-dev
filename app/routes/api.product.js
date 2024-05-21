@@ -11,43 +11,112 @@ export const loader = async ({ request }) => {
 
 
 export const action = async ({ request }) => {
-    console.log("REQUESTTTTT--->")
     return handlePost(request);
 }
+
 
 async function handlePost(request) {
     const data = await request.json();
 
-    const { storeId, productId, productHandle } = data;
+    let { storeId, productId, productHandle, timeframe = 'alltime' } = data;
+
+    if (!['hour', 'day', 'week', 'month'].includes(timeframe)) {
+        timeframe = 'alltime'
+    }
+
+    console.log(timeframe)
 
     if (!storeId || !productId || !productHandle) {
         return json({ success: false })
+    }
+
+    let createdAtFilter = {};
+
+    // Adjust createdAt filter based on the timeframe
+    switch (timeframe) {
+        case 'hour':
+            createdAtFilter = {
+                createdAt: {
+                    gte: new Date(Date.now() - 3600000) // 1 hour ago
+                }
+            };
+            break;
+        case 'day':
+            createdAtFilter = {
+                createdAt: {
+                    gte: new Date(Date.now() - 86400000) // 24 hours ago
+                }
+            };
+            break;
+        case 'week':
+            // Implement week logic
+            break;
+        case 'month':
+            // Implement month logic
+            break;
+        default:
+        // For 'alltime', no time filtering needed
     }
 
     let productView = await db.productView.findFirst({
         where: {
             storeId,
             productId,
-        },
-        orderBy: {
-            createdAt: 'desc',
-        },
-    });
+            timeframe,
+            ...createdAtFilter // Apply createdAt filter if needed
+        }
+    }
+    );
 
-    if (!productView || isDifferentTimeframe(productView.createdAt, new Date())) {
-        // Create a new entry if no entry exists or if the last entry is for a different timeframe
+
+
+
+    if (!productView) {
+        // If no ProductView record found, create a new one
+
+
+        const viewCount = await db.allViews.count({
+            where: {
+                storeId,
+                productId,
+                ...createdAtFilter // Apply createdAt filter if needed
+            }
+        });
+
         await db.productView.create({
             data: {
                 storeId,
                 productId,
                 productHandle,
-                count: 1,
+                timeframe,
+                count: viewCount ? viewCount : 1,
             },
         });
 
-        productView = { count: 1 }; // Set count to 1 for the response
+        // Create an AllViews record for every view
+        await db.allViews.create({
+            data: {
+                storeId,
+                productId
+            }
+        });
+
+        return new Response(JSON.stringify({ success: true, count: 1 }), {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+            },
+        });
     } else {
-        // Update the existing entry if it's for the same timeframe
+        // If ProductView record exists, update the count
+        await db.allViews.create({
+            data: {
+                storeId,
+                productId
+            }
+        });
+
+
         await db.productView.update({
             where: {
                 id: productView.id,
@@ -59,18 +128,15 @@ async function handlePost(request) {
             },
         });
 
-        productView.count++; // Increment count for the response
+        return new Response(JSON.stringify({ success: true, count: productView.count + 1 }), {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+            },
+        });
     }
-
-    console.log("REQUESTTTTT--->")
-    return new Response(JSON.stringify({ success: true, count: productView.count }), {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
-
-        },
-    });
 }
+
 
 
 async function handleGet(request) {

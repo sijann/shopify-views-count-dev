@@ -1,12 +1,19 @@
-import { Card, Layout, Page } from '@shopify/polaris'
+import { BlockStack, Button, Card, InlineStack, Page, Text } from '@shopify/polaris'
+import { ArrowLeftIcon } from '@shopify/polaris-icons';
+
 import React from 'react'
+import PageTitle from '../components/PageTitle';
 
 const Settings = () => {
   return (
     <Page>
-      <Card >
-        Hello
-      </Card>
+      <BlockStack gap={400}>
+        <PageTitle title='Settings' />
+        <Card >
+
+          Hello
+        </Card>
+      </BlockStack>
     </Page>
   )
 }
